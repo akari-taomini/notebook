@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>好吃的正文 · 笔记预览</title>
+<link rel="stylesheet" href="./style.css">
+<body style="background:#eee4d3;font-family:serif;padding:30px;color:#493b32">
+<h1>好吃的正文 · 收藏笔记</h1>
+<p>这是独立预览，数据与酒馆分开保存。</p>
+<button id="open">打开笔记本</button>
+<button id="sample">试着收藏一段正文</button>
+<p id="error" role="status"></p>
+<script type="module">
+import { createStore } from './storage.js';
+import { createNotebook } from './notebook.js';
+try {
+    const book = await createNotebook(createStore('standalone-preview'));
+    document.querySelector('#open').onclick = book.open;
+    document.querySelector('#sample').onclick = () => book.capture('雨停的时候，他还站在书店门口。\n\n手里的纸袋被护得很好，里面是你昨天随口提过的栗子蛋糕。\n\n“正好路过。”他说。\n\n你看了看他湿透的肩膀，没有拆穿。', '预览角色 · 雨后的书店 · 第 12 条');
+    book.open();
+} catch (error) { document.querySelector('#error').textContent = `无法打开：${error.message}。请通过本地 HTTP 服务访问本预览。`; }
+</script>
+</body>
+</html>
