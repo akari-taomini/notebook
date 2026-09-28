@@ -41,6 +41,50 @@
 .tn-status { flex: 1; min-width: 180px; font-size: 11px; color: #806e5d; line-height: 1.6; }
 #tn-launcher { position: fixed; bottom: 75px; right: 16px; z-index: 1000; border: 1px solid #ad9371; border-radius: 20px; padding: 9px 14px; background: #f5ead5; color: #554132; box-shadow: 0 3px 15px #0003; cursor: pointer; }
 .tn-capture { font-size: 12px; width: auto; white-space: nowrap; }
+/* Scope overrides to our own chrome; leave regex-generated content styles alone. */
+dialog.tn-dialog {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+dialog.tn-dialog::backdrop { background: #241c192b; backdrop-filter: blur(2px); }
+.tn-dialog .tn-header, .tn-dialog .tn-footer {
+    background: #fff8ecb8;
+    border-color: transparent;
+    border-radius: 12px;
+}
+.tn-dialog .tn-layout, .tn-dialog .tn-stage, .tn-dialog .tn-editor {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.tn-dialog .tn-sidebar { border: 0; border-radius: 8px; }
+.tn-dialog input.tn-title, .tn-dialog textarea.tn-body,
+.tn-dialog .tn-source, .tn-dialog .tn-reading {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    text-shadow: none;
+    color: #493b32;
+}
+.tn-dialog .tn-reading {
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+    overflow-wrap: anywhere;
+    text-align: start;
+}
+.tn-dialog .tn-reading.tn-plain { white-space: pre-wrap; }
+.tn-dialog .tn-reading img { max-width: 100%; height: auto; }
+.tn-dialog .tn-reading pre { max-width: 100%; overflow-x: auto; }
+.tn-dialog .tn-reading > :first-child { margin-top: 0; }
+.tn-dialog .tn-reading > :last-child { margin-bottom: 0; }
+.tn-dialog .tn-cover { color: #493b32; background: #fff8ecc9; border-radius: 12px; }
+.tn-dialog .tn-actions button, .tn-dialog .tn-actions select { background: #fff8ecc9; }
 @media (max-width: 650px) {
     .tn-dialog { width: 98vw; max-width: 98vw; height: 95dvh; max-height: 95dvh; border-radius: 10px; }
     .tn-header { padding: 10px 12px; gap: 6px; }

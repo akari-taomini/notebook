@@ -43,6 +43,15 @@ export function parseBackup(text) {
             source: typeof note.source === 'string' ? note.source.slice(0, 500) : '',
             created: typeof note.created === 'string' ? note.created.slice(0, 40) : new Date().toISOString(),
             paper: Number.isInteger(note.paper) && note.paper >= 1 && note.paper <= 11 ? note.paper : 1,
+            formatting: note.formatting && typeof note.formatting === 'object' ? {
+                name: typeof note.formatting.name === 'string' ? note.formatting.name.slice(0, 500) : '',
+                isUser: note.formatting.isUser === true, isSystem: note.formatting.isSystem === true,
+                isSelection: note.formatting.isSelection === true,
+                messageId: Number.isInteger(note.formatting.messageId) ? note.formatting.messageId : -1,
+                chatId: typeof note.formatting.chatId === 'string' ? note.formatting.chatId.slice(0, 500) : '',
+                sentAt: typeof note.formatting.sentAt === 'string' ? note.formatting.sentAt.slice(0, 100) : '',
+                scope: typeof note.formatting.scope === 'string' ? note.formatting.scope.slice(0, 500) : '',
+            } : undefined,
         };
     });
 }

@@ -16,7 +16,7 @@ const button = (text, action) => {
     return node;
 };
 
-export async function createNotebook(store) {
+export async function createNotebook(store, options = {}) {
     let notes = await store.read();
     if (!Array.isArray(notes)) throw new Error('笔记数据格式异常，请勿覆盖原数据。');
     let current = null;
@@ -64,12 +64,17 @@ export async function createNotebook(store) {
     const body = el('textarea', 'tn-body');
     body.placeholder = '把好吃的正文留在这里……';
     body.setAttribute('aria-label', '笔记正文');
+    const reading = el('div', 'tn-body tn-reading mes_text');
+    reading.tabIndex = 0;
+    reading.setAttribute('aria-label', '正文阅读');
+    let readingMode = true;
+    const modeButton = button('编辑原文', () => setMode(!readingMode));
     const actions = el('div', 'tn-actions');
     const saveButton = button('保存笔记', save);
     const previous = button('← 上一篇', () => move(-1));
     const next = button('下一篇 →', () => move(1));
-    actions.append(previous, next, paper, saveButton, button('删除', remove));
-    sheet.append(title, source, body);
+    actions.append(previous, next, paper, modeButton, saveButton, button('删除', remove));
+    sheet.append(title, source, body, reading);
     editor.append(sheet, actions);
     stage.append(cover, editor);
     layout.append(sidebar, stage);
@@ -89,7 +94,41 @@ export async function createNotebook(store) {
         return !dirty || confirm('当前修改还没有保存，确定放弃这些修改吗？');
     }
     function show() {
+        if (current && readingMode) renderReading();
         if (!dialog.open) { opener = document.activeElement; dialog.showModal(); }
+    }
+    function renderReading() {
+        reading.replaceChildren();
+        try {
+            const html = options.render?.(body.value, current);
+            if (typeof html === 'string') {
+                // Only the injected host formatter may return HTML. Stored/imported
+                // note bodies are never assigned directly to innerHTML.
+                reading.innerHTML = html;
+                reading.classList.remove('tn-plain');
+            } else {
+                reading.textContent = body.value;
+                reading.classList.add('tn-plain');
+            }
+        } catch (error) {
+            reading.textContent = body.value;
+            reading.classList.add('tn-plain');
+            status.textContent = '酒馆排版暂时不可用，已显示原文。';
+            console.error('[tasty-notebook] 正文渲染失败', error);
+        }
+    }
+    function setMode(read) {
+        readingMode = read;
+        body.hidden = read;
+        reading.hidden = !read;
+        modeButton.textContent = read ? '编辑原文' : '阅读排版';
+        modeButton.setAttribute('aria-pressed', String(!read));
+        if (read) renderReading();
+        else {
+            // Remove regex-produced style elements while editing.
+            reading.replaceChildren();
+            body.focus();
+        }
     }
     function renderList() {
         list.replaceChildren();
@@ -123,13 +162,15 @@ export async function createNotebook(store) {
         body.value = note.body;
         paper.value = note.paper;
         source.textContent = note.source || '随手记';
+        setMode(true);
         setPaper();
         renderList();
     }
-    function newNote(text = '', origin = '') {
+    function newNote(text = '', origin = '', formatting = undefined) {
         if (!canLeave()) return;
         show();
-        edit({ id: crypto.randomUUID(), title: text.trim().split('\n')[0].slice(0, 30), body: text, source: origin, paper: [1, 11, 7][notes.length % 3], created: new Date().toISOString() });
+        edit({ id: crypto.randomUUID(), title: text.trim().split('\n')[0].slice(0, 30), body: text, source: origin, formatting, paper: [1, 11, 7][notes.length % 3], created: new Date().toISOString() });
+        if (!text) setMode(false);
         dirty = true;
         status.textContent = '新笔记尚未保存，可以先修剪正文。';
         title.focus();
@@ -157,12 +198,12 @@ export async function createNotebook(store) {
         if (!body.value.trim()) { status.textContent = '先写一点正文再保存吧。'; return; }
         const note = { ...current, title: title.value.trim() || '未命名笔记', body: body.value, paper: Number(paper.value) };
         const updated = notes.some(n => n.id === note.id) ? notes.map(n => n.id === note.id ? note : n) : [note, ...notes];
-        if (await commit(updated)) { current = note; dirty = false; renderList(); status.textContent = '已保存到当前浏览器。'; }
+        if (await commit(updated)) { current = note; dirty = false; renderList(); setMode(true); status.textContent = '已保存到当前浏览器。'; }
     }
     async function remove() {
         if (!current || busy || !confirm('确定删除这篇笔记？原聊天消息不会受影响。')) return;
         if (await commit(notes.filter(n => n.id !== current.id))) {
-            current = null; dirty = false; editor.hidden = true; cover.hidden = false; renderList(); status.textContent = '笔记已删除。';
+            current = null; dirty = false; reading.replaceChildren(); editor.hidden = true; cover.hidden = false; renderList(); status.textContent = '笔记已删除。';
         }
     }
     function move(step) {
@@ -198,6 +239,7 @@ export async function createNotebook(store) {
     paper.addEventListener('change', setPaper);
     dialog.addEventListener('cancel', event => { if (!canLeave()) event.preventDefault(); });
     dialog.addEventListener('close', () => {
+        reading.replaceChildren();
         if (dirty) { current = null; dirty = false; cover.hidden = false; editor.hidden = true; renderList(); }
         opener?.focus();
     });

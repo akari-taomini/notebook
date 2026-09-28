@@ -1,5 +1,6 @@
 import { createStore } from './storage.js';
 import { createNotebook } from './notebook.js';
+import { renderNote, captureFormatting } from './render.js';
 
 let started = false;
 async function init() {
@@ -12,7 +13,9 @@ async function init() {
             context.extensionSettings[key] = { storageId: crypto.randomUUID() };
             context.saveSettingsDebounced();
         }
-        const book = await createNotebook(createStore(context.extensionSettings[key].storageId));
+        const book = await createNotebook(createStore(context.extensionSettings[key].storageId), {
+            render: (text, note) => renderNote(text, note, SillyTavern.getContext()),
+        });
         const launcher = document.createElement('button');
         launcher.id = 'tn-launcher';
         launcher.type = 'button';
@@ -42,7 +45,7 @@ async function init() {
                     const text = selected || item.mes;
                     if (typeof text !== 'string' || !text.trim()) return;
                     const chatName = live.chatId || live.characters?.[live.characterId]?.chat || '当前聊天';
-                    book.capture(text, `${item.name || '未命名角色'} · ${chatName} · 第 ${index + 1} 条${selected ? ' · 选段' : ''}`);
+                    book.capture(text, `${item.name || '未命名角色'} · ${chatName} · 第 ${index + 1} 条${selected ? ' · 选段' : ''}`, { ...captureFormatting(live, item, index), isSelection: Boolean(selected) });
                 });
                 target.append(capture);
             });
