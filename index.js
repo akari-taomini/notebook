@@ -27,11 +27,18 @@ async function init() {
             document.querySelectorAll('#chat .mes').forEach(message => {
                 const target = message.querySelector('.extraMesButtons') || message.querySelector('.mes_buttons');
                 if (!target || target.querySelector('.tn-capture')) return;
-                const capture = document.createElement('button');
-                capture.className = 'tn-capture menu_button';
-                capture.type = 'button';
-                capture.textContent = '📑 收藏';
-                capture.title = '收藏整条正文；选中文字后点击则只收藏选段';
+                const capture = document.createElement('div');
+                capture.className = 'mes_button tn-capture fa-regular fa-bookmark';
+                capture.setAttribute('role', 'button');
+                capture.setAttribute('tabindex', '0');
+                capture.setAttribute('aria-label', '收藏到拾光手札');
+                capture.title = '收藏到拾光手札（选中文字可只收藏选段）';
+                capture.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        if (!event.repeat) capture.click();
+                    }
+                });
                 capture.addEventListener('pointerdown', event => { if (event.button === 0) event.preventDefault(); });
                 capture.addEventListener('click', () => {
                     const live = SillyTavern.getContext();

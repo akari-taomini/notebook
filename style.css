@@ -40,7 +40,8 @@
 .tn-footer button { font-size: 12px; }
 .tn-status { flex: 1; min-width: 180px; font-size: 11px; color: #806e5d; line-height: 1.6; }
 #tn-launcher { position: fixed; bottom: 75px; right: 16px; z-index: 1000; border: 1px solid #ad9371; border-radius: 20px; padding: 9px 14px; background: #f5ead5; color: #554132; box-shadow: 0 3px 15px #0003; cursor: pointer; }
-.tn-capture { font-size: 12px; width: auto; white-space: nowrap; }
+/* Use the host's mes_button sizing, color and hover behavior. */
+.tn-capture:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; border-radius: 2px; }
 /* Scope overrides to our own chrome; leave regex-generated content styles alone. */
 dialog.tn-dialog {
     background: #f6eedf !important;
