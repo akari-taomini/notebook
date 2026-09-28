@@ -1,4 +1,5 @@
 import { parseBackup } from './storage.js';
+import { mountTheaters } from './theater.js';
 
 const CDN = 'https://cdn.jsdelivr.net/gh/akari-taomini/picture@main/img/';
 const bundled = new Set(['book', 'catalogue', 'page1', 'page5', 'page6', 'page7', 'page11']);
@@ -24,9 +25,9 @@ export async function createNotebook(store, options = {}) {
     let busy = false;
     let opener;
     const dialog = el('dialog', 'tn-dialog');
-    dialog.setAttribute('aria-label', '好吃的正文收藏笔记');
+    dialog.setAttribute('aria-label', '拾光手札');
     const header = el('header', 'tn-header');
-    header.append(el('strong', '', '好吃的正文'), el('span', '', '把喜欢的片段，好好收起来。'));
+    header.append(el('strong', '', '拾光手札'), el('span', '', '把喜欢的片段，好好收起来。'));
     const close = button('关闭 ×', () => { if (canLeave()) dialog.close(); });
     header.append(close);
     const layout = el('div', 'tn-layout');
@@ -62,7 +63,7 @@ export async function createNotebook(store, options = {}) {
         paper.append(option);
     }
     const body = el('textarea', 'tn-body');
-    body.placeholder = '把好吃的正文留在这里……';
+    body.placeholder = '留住值得重读的片段……';
     body.setAttribute('aria-label', '笔记正文');
     const reading = el('div', 'tn-body tn-reading mes_text');
     reading.tabIndex = 0;
@@ -105,6 +106,7 @@ export async function createNotebook(store, options = {}) {
                 // Only the injected host formatter may return HTML. Stored/imported
                 // note bodies are never assigned directly to innerHTML.
                 reading.innerHTML = html;
+                mountTheaters(reading);
                 reading.classList.remove('tn-plain');
             } else {
                 reading.textContent = body.value;
@@ -217,7 +219,7 @@ export async function createNotebook(store, options = {}) {
         const url = URL.createObjectURL(blob);
         const link = el('a');
         link.href = url;
-        link.download = `正文笔记-${new Date().toISOString().slice(0, 10)}.json`;
+        link.download = `拾光手札-${new Date().toISOString().slice(0, 10)}.json`;
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 10000);
         status.textContent = dirty ? '已导出已保存的笔记；当前未保存的修改不在备份内。' : '已导出备份。';

@@ -19,7 +19,7 @@ async function init() {
         const launcher = document.createElement('button');
         launcher.id = 'tn-launcher';
         launcher.type = 'button';
-        launcher.textContent = '📖 正文笔记';
+        launcher.textContent = '📖 拾光手札';
         launcher.title = '打开收藏笔记';
         launcher.addEventListener('click', book.open);
         document.body.append(launcher);
@@ -65,7 +65,7 @@ async function init() {
         }
     } catch (error) {
         console.error('[tasty-notebook] 初始化失败', error);
-        globalThis.toastr?.error('正文笔记初始化失败，请检查浏览器存储权限。');
+        globalThis.toastr?.error('拾光手札初始化失败，请检查浏览器存储权限。');
     }
 }
 

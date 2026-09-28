@@ -1,11 +1,11 @@
 {
-  "display_name": "好吃的正文 · 收藏笔记",
+  "display_name": "拾光手札",
   "loading_order": 50,
   "requires": [],
   "optional": [],
   "js": "index.js",
   "css": "style.css",
   "author": "Personal notebook",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "auto_update": false
 }

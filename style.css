@@ -1,11 +1,11 @@
-.tn-dialog, .tn-dialog * { box-sizing: border-box; }
+.tn-dialog, .tn-dialog :not(:where(.tn-reading *)) { box-sizing: border-box; }
 .tn-dialog { width: min(1120px, 95vw); max-width: 95vw; height: min(820px, 92dvh); max-height: 92dvh; padding: 0; border: 1px solid #b7a285; border-radius: 18px; color: #493b32; background: #f6eedf; box-shadow: 0 24px 100px #21160c80; font-family: Georgia, 'Noto Serif SC', 'Songti SC', serif; text-align: left; }
 .tn-dialog[open] { display: flex; flex-direction: column; }
 .tn-dialog::backdrop { background: #241c196e; backdrop-filter: blur(5px); }
 .tn-dialog [hidden] { display: none !important; }
-.tn-dialog button, .tn-dialog select { cursor: pointer; font: inherit; color: #493b32; border: 1px solid #bba587; border-radius: 7px; background: #fffaf0ed; padding: 8px 12px; line-height: 1.4; }
-.tn-dialog button:hover { background: #e9d9bd; }
-.tn-dialog button:disabled { opacity: .5; cursor: wait; }
+.tn-dialog button:not(:where(.tn-reading *)), .tn-dialog select:not(:where(.tn-reading *)) { cursor: pointer; font: inherit; color: #493b32; border: 1px solid #bba587; border-radius: 7px; background: #fffaf0ed; padding: 8px 12px; line-height: 1.4; }
+.tn-dialog button:not(:where(.tn-reading *)):hover { background: #e9d9bd; }
+.tn-dialog button:not(:where(.tn-reading *)):disabled { opacity: .5; cursor: wait; }
 .tn-dialog :focus-visible { outline: 3px solid #9b7656; outline-offset: 2px; }
 .tn-header { display: flex; align-items: center; gap: 18px; padding: 17px 22px; border-bottom: 1px solid #d7c8b0; }
 .tn-header strong { font-size: 20px; letter-spacing: .1em; }
@@ -14,7 +14,7 @@
 .tn-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); flex: 1; min-height: 0; }
 .tn-sidebar { padding: 24px 16px; min-height: 0; display: flex; flex-direction: column; background-size: 100% 100%; background-color: #ede0c8; border-right: 1px solid #cfbda0; }
 .tn-sidebar h2 { font-size: 18px; margin: 0 0 16px; background: #fff8ebd9; padding: 8px; border-radius: 6px; }
-.tn-dialog input { width: 100%; min-width: 0; font: inherit; color: #493b32; background: #fffaf0ed; border: 1px solid #c9b89b; border-radius: 6px; padding: 10px; }
+.tn-dialog input:not(:where(.tn-reading *)) { width: 100%; min-width: 0; font: inherit; color: #493b32; background: #fffaf0ed; border: 1px solid #c9b89b; border-radius: 6px; padding: 10px; }
 .tn-list { overflow: auto; flex: 1; margin-top: 15px; }
 .tn-list .tn-entry { width: 100%; display: block; text-align: left; margin-bottom: 9px; padding: 12px; }
 .tn-entry strong, .tn-entry small { display: block; overflow-wrap: anywhere; }
@@ -43,17 +43,17 @@
 .tn-capture { font-size: 12px; width: auto; white-space: nowrap; }
 /* Scope overrides to our own chrome; leave regex-generated content styles alone. */
 dialog.tn-dialog {
-    background: transparent !important;
+    background: #f6eedf !important;
     background-image: none !important;
-    border: 0 !important;
-    box-shadow: none !important;
+    border: 1px solid #b7a285 !important;
+    box-shadow: 0 24px 100px #21160c80 !important;
     backdrop-filter: none !important;
 }
 dialog.tn-dialog::backdrop { background: #241c192b; backdrop-filter: blur(2px); }
 .tn-dialog .tn-header, .tn-dialog .tn-footer {
-    background: #fff8ecb8;
-    border-color: transparent;
-    border-radius: 12px;
+    background: #f6eedf;
+    border-color: #d7c8b0;
+    border-radius: 0;
 }
 .tn-dialog .tn-layout, .tn-dialog .tn-stage, .tn-dialog .tn-editor {
     background: transparent !important;
@@ -79,10 +79,14 @@ dialog.tn-dialog::backdrop { background: #241c192b; backdrop-filter: blur(2px); 
     text-align: start;
 }
 .tn-dialog .tn-reading.tn-plain { white-space: pre-wrap; }
-.tn-dialog .tn-reading img { max-width: 100%; height: auto; }
-.tn-dialog .tn-reading pre { max-width: 100%; overflow-x: auto; }
-.tn-dialog .tn-reading > :first-child { margin-top: 0; }
-.tn-dialog .tn-reading > :last-child { margin-bottom: 0; }
+.tn-dialog .tn-list, .tn-dialog .tn-cover, .tn-dialog .tn-body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.tn-dialog .tn-list::-webkit-scrollbar,
+.tn-dialog .tn-cover::-webkit-scrollbar,
+.tn-dialog .tn-body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.tn-dialog .tn-reading .tn-theater-frame { display: block; width: 100%; height: 360px; border: 0; background: transparent; }
 .tn-dialog .tn-cover { color: #493b32; background: #fff8ecc9; border-radius: 12px; }
 .tn-dialog .tn-actions button, .tn-dialog .tn-actions select { background: #fff8ecc9; }
 @media (max-width: 650px) {
